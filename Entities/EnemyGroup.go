@@ -26,10 +26,19 @@ type EnemyGroup struct {
 	movementType     EnemyMovementType
 	maxSpawns        int
 	name             string
+	MarkedForDeath   bool
 }
 
 func (e *EnemyGroup) GetDamage() float64 {
 	return e.damage
+}
+
+func (e *EnemyGroup) MarkForDeath() {
+	e.MarkedForDeath = true
+}
+
+func (e *EnemyGroup) IsMarkedForDeath() bool {
+	return e.MarkedForDeath
 }
 
 func (e *EnemyGroup) GetName() string {
@@ -50,32 +59,6 @@ func (e *EnemyGroup) GetEnemiesPointer() []*Enemy {
 		result = append(result, &e.enemies[i])
 	}
 	return result
-}
-
-func (e *EnemyGroup) HandleCollisions() {
-	Collided := true
-	if e.GetCount() > 1 {
-		for Collided {
-			Collided = false
-			for i := range e.enemies {
-				for j := range e.enemies {
-					if i != j {
-						pos1 := e.enemies[i].GetWorldPos()
-						pos2 := e.enemies[j].GetWorldPos()
-						dir := pos1.To(pos2)
-						CollisionRange := e.enemies[i].hitbox + e.enemies[j].hitbox
-						if dir.Len() < CollisionRange {
-							Collided = true
-							RepelVector := dir.Unit().Scaled(dir.Len() - CollisionRange).Scaled(0.25)
-							e.enemies[i].Move(RepelVector)
-							RepelVector = RepelVector.Scaled(-1)
-							e.enemies[j].Move(RepelVector)
-						}
-					}
-				}
-			}
-		}
-	}
 }
 
 func HandleEnemyCollisionsGeneric(enemis []*Enemy) {
@@ -120,6 +103,9 @@ func (e *EnemyGroup) RemoveDead() int {
 }
 
 func (e *EnemyGroup) Spawn() {
+	if e.MarkedForDeath {
+		return
+	}
 	//get a random position, 300-500 pixels away from the character, in a random direction
 	if len(e.enemies) >= e.maxSpawns {
 		return

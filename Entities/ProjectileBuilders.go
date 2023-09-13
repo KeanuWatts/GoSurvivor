@@ -195,7 +195,7 @@ func (b *ProjectileBuilder) Build() *Projectile {
 		spawnTime:    time.Now(),
 		lifeSpan:     b.lifeSpan,
 		char:         b.char,
-		LastMoveTime: time.Now(),
+		lastMoveTime: time.Now(),
 		hitbox:       b.hitbox,
 	}
 }

@@ -112,6 +112,7 @@ func (b *EnemyGroupBuilder) Build() *EnemyGroup {
 		movementType:     b.movementType,
 		maxSpawns:        b.maxSpawns,
 		name:             b.name,
+		MarkedForDeath:   false,
 	}
 
 }

@@ -25,6 +25,8 @@ github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 h1:DACJavvAHhabrF0
 github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0/go.mod h1:E/TSTwGwJL78qG/PmXZO1EjYhfJinVAhrmmHX6Z8B9k=
 github.com/hajimehoshi/go-mp3 v0.3.0 h1:fTM5DXjp/DL2G74HHAs/aBGiS9Tg7wnp+jkU38bHy4g=
 github.com/hajimehoshi/go-mp3 v0.3.0/go.mod h1:qMJj/CSDxx6CGHiZeCgbiq2DSUkbK0UbtXShQcnfyMM=
+github.com/hajimehoshi/go-steamworks v0.0.0-20230813163040-103842ca9750 h1:CLOr8bM25pPAoUb9k6G9G9Wg4uUq+c9d4uhIRydHjlE=
+github.com/hajimehoshi/go-steamworks v0.0.0-20230813163040-103842ca9750/go.mod h1:dXOYZp8y+T57rJesE7OBBI9ZWtu85NwaaBTb3PEeLU4=
 github.com/hajimehoshi/oto v0.6.1/go.mod h1:0QXGEkbuJRohbJaxr7ZQSxnju7hEhseiPx2hrh6raOI=
 github.com/hajimehoshi/oto v0.7.1 h1:I7maFPz5MBCwiutOrz++DLdbr4rTzBsbBuV2VpgU9kk=
 github.com/hajimehoshi/oto v0.7.1/go.mod h1:wovJ8WWMfFKvP587mhHgot/MBr4DnNy9m6EepeVGnos=
@@ -58,4 +60,6 @@ golang.org/x/sys v0.0.0-20190312061237-fead79001313/go.mod h1:h1NjWce9XRLGQEsW7w
 golang.org/x/sys v0.0.0-20190429190828-d89cdac9e872/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/sys v0.0.0-20190626150813-e07cf5db2756 h1:9nuHUbU8dRnRRfj9KjWUVrJeoexdbeMjttk6Oh1rD10=
 golang.org/x/sys v0.0.0-20190626150813-e07cf5db2756/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+golang.org/x/sys v0.0.0-20210823070655-63515b42dcdf h1:2ucpDCmfkl8Bd/FsLtiD653Wf96cW37s+iGx93zsu4k=
+golang.org/x/sys v0.0.0-20210823070655-63515b42dcdf/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=

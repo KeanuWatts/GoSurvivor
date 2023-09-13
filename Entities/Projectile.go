@@ -18,7 +18,7 @@ type Projectile struct {
 	lifeSpan     int64
 	spawnTime    time.Time
 	char         *Character
-	LastMoveTime time.Time
+	lastMoveTime time.Time
 	hitbox       float64
 }
 
@@ -38,6 +38,7 @@ func (p *Projectile) GetSprite() pixel.Sprite {
 
 func (p *Projectile) Move() {
 	p.movementType.Func(p)
+	p.lastMoveTime = time.Now()
 }
 
 func (p *Projectile) linearMove() {

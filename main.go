@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/faiface/beep"
+	"github.com/faiface/beep/effects"
 	"github.com/faiface/beep/mp3"
 	"github.com/faiface/beep/speaker"
 
@@ -59,6 +60,7 @@ var UpgradesAvailable int
 var restart bool
 var paused bool
 var selectedBox int
+var volume = 0.5
 
 func run() {
 	selectedBox = 0
@@ -194,13 +196,13 @@ func run() {
 
 				if score == 50 {
 					//remove all enemies with the name "Liniar"
-					character.RemoveEnemiesWithNam("Liniar")
+					character.MarkEnemiesForDeathWithName("Liniar")
 					//add the Orth enemy group
 					character.AddEnemyGroup(*enemyList[1])
 				}
 				if score == 100 {
 					//remove all enemies with the name "Orth"
-					character.RemoveEnemiesWithNam("Orth")
+					character.MarkEnemiesForDeathWithName("Orth")
 					//add the Diag enemy group
 					character.AddEnemyGroup(*enemyList[2])
 				}
@@ -210,9 +212,9 @@ func run() {
 				}
 				if score == 200 {
 					//remove all enemies with the name "Orth"
-					character.RemoveEnemiesWithNam("Orth")
+					character.MarkEnemiesForDeathWithName("Orth")
 					//remove all enemies with the name "Diag"
-					character.RemoveEnemiesWithNam("Diag")
+					character.MarkEnemiesForDeathWithName("Diag")
 					//add the Spiral enemy group
 					character.AddEnemyGroup(*enemyList[3])
 				}
@@ -273,13 +275,13 @@ func DrawPauseScreen() {
 
 	bg.Draw()
 	character.Draw()
-	projectileList.ProlongLifeSpan()
 	color := colornames.Black
 	color.A = 100
 	Util.DrawHollowRect(win, Center, pixel.Vec{X: win.Bounds().W(), Y: win.Bounds().H()}, color, 1, true)
 	Util.DrawText(win, "Press Enter to Unpause", pixel.Vec{X: Center.X, Y: Center.Y}, 5)
 	if win.JustPressed(pixelgl.KeyEnter) {
 		paused = false
+		projectileList.ProlongLifeSpan()
 	}
 }
 
@@ -295,38 +297,17 @@ func MainGameLoop() {
 	if win.JustPressed(pixelgl.KeyEscape) {
 		paused = true
 	}
-	if win.Pressed(pixelgl.KeyUp) {
+	if win.Pressed(pixelgl.KeyUp) || win.Pressed(pixelgl.KeyW) {
 		YMovement += 1
 	}
-	if win.Pressed(pixelgl.KeyDown) {
+	if win.Pressed(pixelgl.KeyDown) || win.Pressed(pixelgl.KeyS) {
 		YMovement -= 1
 	}
-	if win.Pressed(pixelgl.KeyLeft) {
+	if win.Pressed(pixelgl.KeyLeft) || win.Pressed(pixelgl.KeyA) {
 		XMovement -= 1
 	}
-	if win.Pressed(pixelgl.KeyRight) {
+	if win.Pressed(pixelgl.KeyRight) || win.Pressed(pixelgl.KeyD) {
 		XMovement += 1
-	}
-	if win.JustPressed(pixelgl.KeyQ) {
-		//give some code to crash the program ungacefully, not panic but segfault
-		gs := gameState{
-			Center:            Center,
-			TimeSinceStart:    timeSincStart,
-			ProjectileList:    projectileList,
-			EnemyList:         enemyList,
-			Character:         character,
-			Win:               win,
-			PEPE:              PEPE,
-			AttackSpeed:       AttackSpeed,
-			Bg:                bg,
-			Tick:              tick,
-			LastTickTimes:     lastTickTimes,
-			UpgradesAvailable: UpgradesAvailable,
-			Restart:           restart,
-			Paused:            paused,
-			SelectedBox:       selectedBox,
-		}
-		fmt.Println(SaveGameState(&gs))
 	}
 
 	movVec := pixel.Vec{X: XMovement, Y: YMovement}
@@ -371,15 +352,14 @@ func DrawUpgradeScreen() {
 	win.Clear(colornames.Black)
 	bg.Draw()
 	character.Draw()
-	character.ProlongLifeSpan()
-	if win.JustPressed(pixelgl.KeyUp) {
+	if win.JustPressed(pixelgl.KeyUp) || win.JustPressed(pixelgl.KeyW) {
 		go playAudioFile("Util/Assets/menu-selection-102220.mp3")
 		selectedBox--
 		if selectedBox < 0 {
 			selectedBox = 2
 		}
 	}
-	if win.JustPressed(pixelgl.KeyDown) {
+	if win.JustPressed(pixelgl.KeyDown) || win.JustPressed(pixelgl.KeyS) {
 		go playAudioFile("Util/Assets/menu-selection-102220.mp3")
 		selectedBox++
 		if selectedBox > 2 {
@@ -421,6 +401,7 @@ func DrawUpgradeScreen() {
 		(UpgradeOptions)[selectedBox].ApplyUpgrade(&character)
 		selectedBox = 0
 		firstLoop = true
+		projectileList.ProlongLifeSpan()
 	}
 
 }
@@ -516,9 +497,15 @@ func playAudioFile(filePath string) {
 		// log.Fatal(err)
 	}
 	defer streamer.Close()
+	volume := &effects.Volume{
+		Streamer: streamer,
+		Base:     2,
+		Volume:   -1.5, //each value of 1 will double the volume(half if negative) ((double is based off the base))
+		Silent:   false,
+	}
 
 	done := make(chan bool)
-	speaker.Play(beep.Seq(streamer, beep.Callback(func() {
+	speaker.Play(beep.Seq(volume, beep.Callback(func() {
 		done <- true
 	})))
 

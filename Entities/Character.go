@@ -33,10 +33,18 @@ type Character struct {
 	AvailableUpgrades []*Upgrade
 }
 
-func (c *Character) RemoveEnemiesWithNam(name string) {
+func (c *Character) RemoveEnemiesWithName(name string) {
 	for i := len(c.enemies) - 1; i >= 0; i-- {
 		if Contains(c.enemies[i].GetName(), name) {
 			c.enemies = append(c.enemies[:i], c.enemies[i+1:]...)
+		}
+	}
+}
+
+func (c *Character) MarkEnemiesForDeathWithName(name string) {
+	for i := len(c.enemies) - 1; i >= 0; i-- {
+		if Contains(c.enemies[i].GetName(), name) {
+			c.enemies[i].MarkForDeath()
 		}
 	}
 }
@@ -229,11 +237,12 @@ func (c *Character) GetScore() int {
 }
 
 func (c *Character) GamestateUpdate() {
+	//spawn enemies
 	enemyCount := 0
 	for i := range c.enemies {
 		enemyCount += len(c.enemies[i].enemies)
 	}
-	if enemyCount < 100 {
+	if enemyCount < 200 {
 		rand.Seed(time.Now().UnixNano())
 		spawnRate := determineSpawnRate(c.score)
 		if rand.Float64()*1000 <= spawnRate {
@@ -241,13 +250,25 @@ func (c *Character) GamestateUpdate() {
 			c.enemies[i].Spawn()
 		}
 	}
+
+	//spawn projectiles
 	for i := range c.projectiles {
 		c.projectiles[i].TryShoot(c)
 	}
+
+	//regen
 	if time.Since(c.lastRegenTime).Seconds() > 1 {
 		c.Heal(c.regen)
 		c.lastRegenTime = time.Now()
 	}
+
+	//Clear enemy groups
+	for i := len(c.enemies) - 1; i >= 0; i-- {
+		if c.enemies[i].IsMarkedForDeath() && len(c.enemies[i].enemies) == 0 {
+			c.enemies = append(c.enemies[:i], c.enemies[i+1:]...)
+		}
+	}
+
 }
 
 func (c *Character) ProlongLifeSpan() {

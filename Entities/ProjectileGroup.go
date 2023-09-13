@@ -46,8 +46,7 @@ func (pg *ProjectileGroup) TryShoot(char *Character) {
 
 func (pg *ProjectileGroup) ProlongLifeSpan() {
 	for i := range pg.projectiles {
-		remainingLifespan := pg.projectiles[i].lifeSpan - time.Since(pg.projectiles[i].spawnTime).Milliseconds()
-		pg.projectiles[i].spawnTime = time.Now().Add(-time.Duration(remainingLifespan) * time.Millisecond)
+		pg.projectiles[i].spawnTime = pg.projectiles[i].spawnTime.Add(time.Since(pg.projectiles[i].lastMoveTime))
 	}
 }
 
